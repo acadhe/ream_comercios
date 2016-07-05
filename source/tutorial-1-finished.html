@@ -1,0 +1,84 @@
+<html>
+<head>
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+  <!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css" />
+  <![endif]-->
+  <style>
+    html, body {width:100%; height:100%; padding: 0; margin: 0;}
+    #cartodb-map { width: 100%; height:100%; background: black;}
+  </style>
+
+  <script type="infowindow/html" id="infowindow_template">
+ <div class="cartodb-popup header with-image v2" data-cover="true">
+  <a href="#close" class="cartodb-popup-close-button close">x</a>
+  <div class="cartodb-popup-header">
+    <div class="cover">
+      <div id="spinner"></div>
+      <div class="image_not_found"> <i></i> <a href="#/map" class="help">Non-valid picture URL</a></div>
+      <span class="separator"></span>
+      <h1 class="order1">{{nombre_com}}</h1>
+      <div class="shadow"></div>
+      <img src="{{fotos}}" style="height:138px;display:inline" />
+    </div>
+  </div>
+  <div class="cartodb-popup-content-wrapper">
+    <div class="cartodb-popup-content">
+      <h4>Nombre del Comercio:</h4>
+      <p>{{nombre_com}}</p>
+      <h4>Direccion:</h4>
+      <p>{{direccia_n}}</p>
+    </div>
+  </div>
+  <div class="cartodb-popup-tip-container"></div>
+</div>
+</script>
+
+
+
+  <script>
+    var map;
+    function init(){
+      // initiate leaflet map
+      map = new L.Map('cartodb-map', { 
+        center: [36.7213,-4.4213],         
+        zoom: 16
+      })
+
+      L.tileLayer('https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png', {
+        attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
+      }).addTo(map);
+
+      var layerUrl = 'https://acadhe.cartodb.com/api/v2/viz/1dbeff50-33c2-11e6-bf9e-0e8c56e2ffdb/viz.json';
+
+
+
+      cartodb.createLayer(map, layerUrl)
+        .addTo(map)
+        .on('done', function(layer) {  
+
+      // change the query for the first layer
+      var subLayerOptions = {
+        cartocss: "#comercios_visitados{marker-fill: #FFCC00; marker-fill-opacity: 0.5; marker-width: 8; marker-line-color: #FFFFFF; marker-line-width: 1.5; marker-allow-overlap: true;}"
+
+      }
+      var sublayer = layer.getSubLayer(0);
+      sublayer.set(subLayerOptions);
+
+      sublayer.infowindow.set('template', $('#infowindow_template').html());
+      
+      sublayer.on('featureClick', function(e, latlng, pos, data) {
+      });
+      }).on('error', function() {
+        //log the error
+      s});
+
+    }  
+  </script>
+</head>
+
+<body onload="init()">
+  <div id='cartodb-map'></div>
+</body>
+</html>
